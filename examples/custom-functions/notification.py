@@ -23,7 +23,7 @@ async def done(text: str):
 	# STEP 1: go to https://support.google.com/accounts/answer/185833
 	# STEP 2: Create an app password (you can't use here your normal gmail password)
 	# STEP 3: Use the app password in the code below for the password
-	yag = yagmail.SMTP('your_email@gmail.com', 'your_app_password')
+	yag = yagmail.SMTP('ashwathpk1@gmail.com', 'fakeacnt123')
 	yag.send(
 		to='recipient@example.com',
 		subject='Test Email',
