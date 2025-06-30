@@ -1,0 +1,105 @@
+# browser_use/cli.py
+- Interactive command-line interface (CLI) and Textual TUI for browser-use
+- Features: rich logging panel, command history, dynamic config loading, LLM model selection, browser session management, user-friendly input, and real-time feedback
+- Integrates with browser_use agent/controller, supports multiple LLM providers, and provides a visually enhanced terminal experience
+
+# browser_use/config.py
+- Lazy-loading configuration system for environment variables and runtime settings
+- Features: dynamic property access for all config values, Docker/container detection, runtime directory management, environment variable overrides, and cloud sync support
+- Centralizes all config logic for browser-use, ensuring consistent and flexible configuration across modules
+
+# browser_use/exceptions.py
+- Custom exception class for LLM-related errors in browser-use
+- Features: status code and message encapsulation, clear error reporting for LLM failures
+- Used to standardize error handling for language model operations throughout the codebase
+
+# browser_use/logging_config.py
+- Utilities for advanced logging configuration and custom log levels
+- Features: add new logging levels at runtime, extend logging.Logger with custom methods, environment-based logging setup
+- Enables rich, granular logging for browser-use, supporting custom log levels like TRACE or RESULT for better debugging and UI integration
+
+# browser_use/utils.py
+- Utility functions and classes for cross-platform, async, and browser-use-specific tasks
+- Features: advanced signal handling (SIGINT/SIGTERM), environment variable helpers, platform detection, error type imports, generic decorators, and URL/domain matching
+- Provides reusable building blocks for robust, user-friendly, and portable automation and agent workflows
+
+# browser_use/agent/cloud_events.py
+- Event models for agent-cloud communication and task/file updates
+- Features: Pydantic event classes for updating agent tasks, uploading files, tracking feedback, and cloud sync
+- Enables structured, versioned, and extensible event-driven workflows between agents and cloud services
+
+# browser_use/agent/gif.py
+- Utilities for generating animated GIFs from agent browser session history
+- Features: screenshot decoding, Unicode text overlay, GIF creation with task/goals, PIL integration, and cross-platform support
+- Enables visual summaries and sharing of agent behavior, useful for debugging, demos, and cloud reporting
+
+# browser_use/agent/prompts.py
+- System prompt and template management for agent LLM interactions
+- Features: dynamic prompt loading from markdown, system/user message construction, action description injection, and extensibility for custom prompts
+- Centralizes and standardizes the language model's instructions, ensuring consistent agent behavior and easy customization
+
+# browser_use/agent/service.py
+- Core agent orchestration and step execution logic for browser-use
+- Features: async agent loop, event-driven architecture, LLM integration, memory management, prompt handling, error tracking, and session history
+- Coordinates browser sessions, agent state, cloud events, and message management for robust, extensible automation workflows
+
+# browser_use/agent/system_prompt.md
+- Markdown template for the agent's system prompt and LLM instructions
+- Features: detailed agent role description, input/output structure, language settings, memory/event stream format, and user request prioritization
+- Ensures the agent receives consistent, context-rich, and extensible instructions for browser automation tasks
+
+# browser_use/agent/views.py
+- Data models and state management for agent configuration, history, and output
+- Features: Pydantic models for agent settings, state, step info, action results, error handling, and browser state tracking
+- Provides structured, validated, and extensible representations of agent memory, actions, and interactions for robust automation
+
+# browser_use/agent/memory/
+- Procedural memory subsystem for agent context compression and retrieval
+- Features: memory service for summarizing agent history, configurable memory intervals, embedding/vector store integration, and Pydantic config models
+- Enables long-context, efficient, and scalable agent operation by distilling large histories into compact, retrievable memory chunks
+
+# browser_use/agent/message_manager/
+- Subsystem for managing agent message history, metadata, and conversation state
+- Features: message storage, metadata tracking, conversation saving/loading, and integration with memory and LLM modules
+- Enables robust, context-aware agent conversations and supports advanced memory and replay features
+
+# browser_use/browser/
+- Core browser automation and session management subsystem for browser-use
+- Features: browser profile/session/context management, Playwright integration, browser state tracking, extension support, and utility functions
+- Provides the foundation for all browser-based agent actions, enabling robust, multi-tab, and extensible automation workflows
+
+# browser_use/controller/
+- Action controller and registry subsystem for browser-use agent actions
+- Features: action registration, dynamic action model/schema generation, action execution, registry views, and service logic
+- Centralizes all available agent actions, enabling dynamic discovery, validation, and execution of browser and DOM operations
+
+# browser_use/dom/
+- DOM tree processing, element extraction, and history tracking subsystem
+- Features: DOM tree building, clickable element processing, history tree processing, selector mapping, and test utilities
+- Enables agents to reason about, interact with, and track changes in the web page DOM for robust automation and replay
+
+# browser_use/filesystem/
+- Filesystem abstraction and file management subsystem for browser-use
+- Features: cross-platform file operations, file system state tracking, and integration with agent memory and browser actions
+- Provides a unified interface for reading, writing, and managing files during agent tasks and automation workflows
+
+# browser_use/llm/
+- Language model (LLM) integration subsystem for browser-use
+- Features: unified LLM interface, support for multiple providers (OpenAI, Anthropic, Google, etc.), message formatting, exceptions, and test utilities
+- Enables agent reasoning, prompt construction, and conversation management with pluggable, extensible LLM backends
+
+# browser_use/sync/
+- Cloud sync and authentication subsystem for browser-use
+- Features: cloud authentication, sync service, and integration with agent state and cloud events
+- Enables agents to persist, synchronize, and share state and results across devices and cloud environments
+
+# browser_use/telemetry/
+- Telemetry and analytics subsystem for browser-use
+- Features: event tracking, product telemetry, and integration with agent/controller events
+- Enables usage analytics, debugging, and product improvement through structured telemetry data collection
+
+# browser_use/tokens/
+- Token counting and cost estimation subsystem for LLM usage in browser-use
+- Features: token counting, cost tracking, and integration with LLM message formatting and agent memory
+- Enables efficient resource management and cost-aware automation by tracking LLM token usage and associated costs
+

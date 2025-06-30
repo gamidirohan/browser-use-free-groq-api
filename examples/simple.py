@@ -17,13 +17,18 @@ llm = ChatOpenAI(
 	model='gpt-4o',
 	temperature=0.0,
 )
-task = 'Go to kayak.com and find the cheapest flight from Zurich to San Francisco on 2025-05-01'
+task = 'Go to github, look up "browser-use", and return the list of contributers with their contributions.'
 
-agent = Agent(task=task, llm=llm)
+agent = Agent(task=task, llm=llm, save_playwright_script_path="replay_script.py")
 
 
 async def main():
-	await agent.run()
+    history = await agent.run()
+    if history:
+        history.save_to_file("agent_history.json")
+        # Automatically generate flow.json for React Flow app
+        import subprocess
+        subprocess.run([sys.executable, "generate_flow_json.py"], check=True)
 
 
 if __name__ == '__main__':
