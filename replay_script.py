@@ -133,44 +133,32 @@ async def run_generated_script():
 
             # --- Step 1 ---
             # Action 1
-            print(f"Opening new tab and navigating to: https://github.com (Step 1, Action 1)")
+            print(f"Opening new tab and navigating to: https://www.wikipedia.org (Step 1, Action 1)")
             page = await context.new_page()
-            await page.goto("https://github.com", timeout=5000)
+            await page.goto("https://www.wikipedia.org", timeout=5000)
             await page.wait_for_load_state('load', timeout=5000)
             await page.wait_for_timeout(1000)
 
             # --- Step 2 ---
             # Action 2
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/button", "click", step_info="Step 2, Action 1")
+            await _try_locate_and_act(page, "xpath=//html/body/main/div[2]/form/fieldset/div/input", "fill", text=replace_sensitive_data("Paradox", SENSITIVE_DATA), step_info="Step 2, Action 1")
+            # Action 3
+            await _try_locate_and_act(page, "xpath=//html/body/main/div[2]/form/fieldset/button", "click", step_info="Step 2, Action 2")
 
             # --- Step 3 ---
-            # Action 3
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[1]/div/div[2]/input", "fill", text=replace_sensitive_data("browser-use", SENSITIVE_DATA), step_info="Step 3, Action 1")
+            # Action 4
+            await _try_locate_and_act(page, "xpath=//html/body/main/div[2]/form/fieldset/div/div[2]/div/a[1]", "click", step_info="Step 3, Action 1")
 
             # --- Step 4 ---
-            # Action 4
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[2]/ul/li/ul/li", "click", step_info="Step 4, Action 1")
+            # Action 5
+            # Action: extract_content (Goal: extract the content of the 'Paradox' Wikipedia page) - Skipped in Playwright script (Step 4, Action 1)
 
             # --- Step 5 ---
-            # Action 5
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[4]/main/react-app/div/div/div[1]/div/div/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/div[1]/h3/div/div[2]/a", "click", step_info="Step 5, Action 1")
-
-            # --- Step 6 ---
             # Action 6
-            print(f"Scrolling down by one page height (Step 6, Action 1)")
-            await page.evaluate('window.scrollBy(0, window.innerHeight)')
-            await page.wait_for_timeout(500)
-
-            # --- Step 7 ---
-            # Action 7
-            # Action: extract_content (Goal: list of contributors with their contributions) - Skipped in Playwright script (Step 7, Action 1)
-
-            # --- Step 8 ---
-            # Action 8
-            print("\n--- Task marked as Done by agent (Step 8, Action 1) ---")
+            print("\n--- Task marked as Done by agent (Step 5, Action 1) ---")
             print(f"Agent reported success: True")
             # Final Message from agent (may contain placeholders):
-            final_message = replace_sensitive_data("Contributors for 'browser-use' on GitHub:\n1. Magnus M\u00fcller - Author\n2. Gregor \u017duni\u010d - Author\n3. 190 contributors - Various contributions", SENSITIVE_DATA)
+            final_message = replace_sensitive_data("Successfully extracted and displayed the content of the 'Paradox' Wikipedia page. The page includes sections on common elements, Quine's classification, Ramsey's classification, and paradoxes in medicine, among others.", SENSITIVE_DATA)
             print(final_message)
         except PlaywrightActionError as pae:
             print(f'\n--- Playwright Action Error: {pae} ---', file=sys.stderr)
