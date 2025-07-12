@@ -32,6 +32,7 @@ class TaskRequest(BaseModel):
     task: str
     model: str = "gpt-4o"
     temperature: float = 0.0
+    script_language: str = "python"  # "python" or "javascript"
 
 class AgentStatus(BaseModel):
     status: str  # "idle", "running", "completed", "error"
@@ -39,9 +40,10 @@ class AgentStatus(BaseModel):
     history_available: bool = False
     flow_available: bool = False
     replay_available: bool = False
+    script_language: str = "python"  # Track which language was used
 
 # Global status tracking
-current_status = AgentStatus(status="idle", message="Ready to run agent")
+current_status = AgentStatus(status="idle", message="Ready to run agent", script_language="python")
 
 @app.get("/")
 async def root():
@@ -58,24 +60,30 @@ async def run_agent(request: TaskRequest):
     try:
         current_status.status = "running"
         current_status.message = f"Running agent with task: {request.task[:50]}..."
-        
-        # Initialize the model
+          # Initialize the model
         llm = ChatOpenAI(
             model=request.model,
             temperature=request.temperature,
         )
         
+        # Determine script file extension and language
+        script_extension = ".js" if request.script_language == "javascript" else ".py"
+        script_filename = f"replay_script{script_extension}"
+        
         # Create agent
         agent = Agent(
             task=request.task, 
             llm=llm, 
-            save_playwright_script_path="replay_script.py"
+            save_playwright_script_path=script_filename,
+            playwright_script_language=request.script_language
         )
         
         # Run agent
         history = await agent.run()
         
-        # Save history
+        # Update global status with script language
+        current_status.script_language = request.script_language
+          # Save history
         if history:
             history.save_to_file("agent_history.json")
             current_status.history_available = True
@@ -91,7 +99,9 @@ async def run_agent(request: TaskRequest):
         return {
             "success": True, 
             "message": "Agent completed successfully",
-            "final_result": history.final_result() if history else None
+            "final_result": history.final_result() if history else None,
+            "script_language": request.script_language,
+            "script_file": script_filename
         }
         
     except Exception as e:
@@ -116,16 +126,26 @@ async def generate_flow():
 @app.post("/run-replay")
 async def run_replay():
     try:
-        if not Path("replay_script.py").exists():
-            raise HTTPException(status_code=400, detail="No replay script found. Run agent first.")
-            
+        # Determine which script file to run based on current status
+        script_extension = ".js" if current_status.script_language == "javascript" else ".py"
+        script_filename = f"replay_script{script_extension}"
+        
+        if not Path(script_filename).exists():
+            raise HTTPException(status_code=400, detail=f"No replay script found ({script_filename}). Run agent first.")
+        
         # Run replay script in background
-        process = subprocess.Popen([sys.executable, "replay_script.py"])
+        if current_status.script_language == "javascript":
+            # Run JavaScript script with Node.js
+            process = subprocess.Popen(["node", script_filename])
+        else:
+            # Run Python script
+            process = subprocess.Popen([sys.executable, script_filename])
         
         return {
             "success": True, 
-            "message": "Replay script started",
-            "process_id": process.pid
+            "message": f"Replay script started ({script_filename})",
+            "process_id": process.pid,
+            "script_language": current_status.script_language
         }
         
     except Exception as e:
@@ -141,6 +161,36 @@ async def get_flow_data():
         with open(flow_path) as f:
             return json.load(f)
             
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/script-info")
+async def get_script_info():
+    """Get information about available replay scripts"""
+    try:
+        scripts = []
+        
+        # Check for Python script
+        if Path("replay_script.py").exists():
+            scripts.append({
+                "filename": "replay_script.py",
+                "language": "python",
+                "exists": True
+            })
+        
+        # Check for JavaScript script
+        if Path("replay_script.js").exists():
+            scripts.append({
+                "filename": "replay_script.js", 
+                "language": "javascript",
+                "exists": True
+            })
+        
+        return {
+            "current_language": current_status.script_language,
+            "available_scripts": scripts
+        }
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

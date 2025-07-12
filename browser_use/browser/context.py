@@ -356,8 +356,12 @@ class BrowserContext:
 				logger.debug('Skipping viewport size setting in _initialize_session because no_viewport is not False')
 		except Exception as e:
 			logger.debug(f'Failed to set viewport size: {e}')
-
 		self.active_tab = active_page
+
+		# Wait 15 seconds after browser initialization for manual captcha solving
+		logger.info('⏱️  Waiting 15 seconds for manual captcha solving...')
+		await asyncio.sleep(15)
+		logger.info('✅  15-second wait completed, continuing with automation')
 
 		return self.session
 

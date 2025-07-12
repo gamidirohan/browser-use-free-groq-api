@@ -622,7 +622,6 @@ class PlaywrightScriptGenerator:
 					'',
 				]
 			)
-
 		script_lines.extend(
 			[
 				'            # Initial page handling',
@@ -632,6 +631,11 @@ class PlaywrightScriptGenerator:
 				'            else:',
 				'                page = await context.new_page()',
 				"                print('Created a new page as none existed.')",
+				'',
+				'            # Wait 15 seconds for manual captcha solving',
+				"            print('⏱️  Waiting 15 seconds for manual captcha solving...')",
+				'            await asyncio.sleep(15)',
+				"            print('✅  15-second wait completed, continuing with automation')",
 				"            print('\\n--- Starting Generated Script Execution ---')",
 			]
 		)

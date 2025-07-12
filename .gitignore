@@ -35,3 +35,7 @@ AgentHistory.json
 AgentHistoryList.json
 private_example.py
 private_example
+
+
+node_modules/
+package-lock.json

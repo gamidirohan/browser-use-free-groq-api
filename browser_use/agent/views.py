@@ -73,9 +73,9 @@ class AgentSettings(BaseModel):
 	planner_interval: int = 1  # Run planner every N steps
 	is_planner_reasoning: bool = False  # type: ignore
 	extend_planner_system_message: str | None = None
-
 	# Playwright script generation setting
 	save_playwright_script_path: str | None = None  # Path to save the generated Playwright script
+	playwright_script_language: str = 'python'  # Language for script generation ('python' or 'javascript')
 
 
 class AgentState(BaseModel):
@@ -257,28 +257,36 @@ class AgentHistoryList(BaseModel):
 				json.dump(data, f, indent=2)
 		except Exception as e:
 			raise e
-
 	def save_as_playwright_script(
 		self,
 		output_path: str | Path,
 		sensitive_data_keys: list[str] | None = None,
 		browser_config: BrowserConfig | None = None,
 		context_config: BrowserContextConfig | None = None,
+		language: str = 'python',
 	) -> None:
 		"""
 		Generates a Playwright script based on the agent's history and saves it to a file.
 		Args:
-			output_path: The path where the generated Python script will be saved.
+			output_path: The path where the generated script will be saved.
 			sensitive_data_keys: A list of keys used as placeholders for sensitive data
 								 (e.g., ['username_placeholder', 'password_placeholder']).
 								 These will be loaded from environment variables in the
 								 generated script.
 			browser_config: Configuration of the original Browser instance.
 			context_config: Configuration of the original BrowserContext instance.
+			language: The language to generate ('python' or 'javascript').
 		"""
 		try:
 			serialized_history = self.model_dump()['history']
-			generator = PlaywrightScriptGenerator(serialized_history, sensitive_data_keys, browser_config, context_config)
+			
+			if language.lower() == 'javascript':
+				from browser_use.agent.playwright_script_generator_js import PlaywrightScriptGeneratorJS
+				generator = PlaywrightScriptGeneratorJS(serialized_history, sensitive_data_keys, browser_config, context_config)
+			else:
+				from browser_use.agent.playwright_script_generator import PlaywrightScriptGenerator
+				generator = PlaywrightScriptGenerator(serialized_history, sensitive_data_keys, browser_config, context_config)
+				
 			script_content = generator.generate_script_content()
 			path_obj = Path(output_path)
 			path_obj.parent.mkdir(parents=True, exist_ok=True)

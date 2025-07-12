@@ -148,10 +148,10 @@ class Agent(Generic[Context]):
 		planner_llm: BaseChatModel | None = None,
 		planner_interval: int = 1,  # Run planner every N steps
 		is_planner_reasoning: bool = False,
-		extend_planner_system_message: str | None = None,
-		injected_agent_state: AgentState | None = None,
+		extend_planner_system_message: str | None = None,		injected_agent_state: AgentState | None = None,
 		context: Context | None = None,
 		save_playwright_script_path: str | None = None,
+		playwright_script_language: str = 'python',
 		enable_memory: bool = True,
 		memory_config: MemoryConfig | None = None,
 		source: str | None = None,
@@ -184,9 +184,9 @@ class Agent(Generic[Context]):
 			tool_calling_method=tool_calling_method,
 			page_extraction_llm=page_extraction_llm,
 			planner_llm=planner_llm,
-			planner_interval=planner_interval,
-			is_planner_reasoning=is_planner_reasoning,
+			planner_interval=planner_interval,			is_planner_reasoning=is_planner_reasoning,
 			save_playwright_script_path=save_playwright_script_path,
+			playwright_script_language=playwright_script_language,
 			extend_planner_system_message=extend_planner_system_message,
 		)
 
@@ -918,13 +918,13 @@ class Agent(Generic[Context]):
 				)
 				try:
 					# Extract sensitive data keys if sensitive_data is provided
-					keys = list(self.sensitive_data.keys()) if self.sensitive_data else None
-					# Pass browser and context config to the saving method
+					keys = list(self.sensitive_data.keys()) if self.sensitive_data else None					# Pass browser and context config to the saving method
 					self.state.history.save_as_playwright_script(
 						self.settings.save_playwright_script_path,
 						sensitive_data_keys=keys,
 						browser_config=self.browser.config,
 						context_config=self.browser_context.config,
+						language=self.settings.playwright_script_language,
 					)
 				except Exception as script_gen_err:
 					# Log any error during script generation/saving
