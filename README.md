@@ -1,199 +1,376 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./static/browser-use-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="./static/browser-use.png">
-  <img alt="Shows a black Browser Use Logo in light color mode and a white one in dark color mode." src="./static/browser-use.png"  width="full">
-</picture>
+# Browser-Use Free GROQ API
 
-<h1 align="center">Enable AI to control your browser 🤖</h1>
+A powerful web automation framework that combines browser-use agents with JavaScript/Python script generation and a React flow visualizer. This application allows you to automate browser tasks, generate replay scripts in multiple languages, and visualize agent workflows with a 15-second captcha wait feature.
 
-[![GitHub stars](https://img.shields.io/github/stars/gregpr07/browser-use?style=social)](https://github.com/gregpr07/browser-use/stargazers)
-[![Discord](https://img.shields.io/discord/1303749220842340412?color=7289DA&label=Discord&logo=discord&logoColor=white)](https://link.browser-use.com/discord)
-[![Cloud](https://img.shields.io/badge/Cloud-☁️-blue)](https://cloud.browser-use.com)
-[![Documentation](https://img.shields.io/badge/Documentation-📕-blue)](https://docs.browser-use.com)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00)
-[![Weave Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fapp.workweave.ai%2Fapi%2Frepository%2Fbadge%2Forg_T5Pvn3UBswTHIsN1dWS3voPg%2F881458615&labelColor=#EC6341)](https://app.workweave.ai/reports/repository/org_T5Pvn3UBswTHIsN1dWS3voPg/881458615)
+## 🚀 Features
 
-🌐 Browser-use is the easiest way to connect your AI agents with the browser.
+- **Dual Script Generation**: Generate both Python and JavaScript Playwright scripts from agent history
+- **Captcha Wait Integration**: Built-in 15-second delay for manual captcha solving
+- **React Flow Visualizer**: Interactive web interface to visualize agent workflows
+- **FastAPI Backend**: RESTful API for running agents and managing workflows
+- **Multi-Language Support**: Support for various LLM providers (OpenAI, Groq, Anthropic, etc.)
+- **Browser Context Management**: Advanced browser session handling with cookie persistence
 
-💡 See what others are building and share your projects in our [Discord](https://link.browser-use.com/discord)! Want Swag? Check out our [Merch store](https://browsermerch.com).
+## 📋 Prerequisites
 
-🌤️ Skip the setup - try our <b>hosted version</b> for instant browser automation! <b>[Try the cloud ☁︎](https://cloud.browser-use.com)</b>.
+- **Python 3.8+**
+- **Node.js 16+** (for React flow visualizer)
+- **Chrome/Chromium browser**
+- **API Keys** for your chosen LLM provider
 
-# Quick start
+## 🛠️ Installation & Setup
 
-With pip (Python>=3.11):
-
-```bash
-pip install browser-use
+### 1. Clone Repository
+```powershell
+git clone <repository-url>
+cd browser-use-free-groq-api
 ```
 
-For memory functionality (requires Python<3.13 due to PyTorch compatibility):  
+### 2. Python Environment Setup
+```powershell
+# Create virtual environment
+python -m venv myenv
 
-```bash
-pip install "browser-use[memory]"
+# Activate virtual environment
+myenv\Scripts\activate
+
+# Install Python dependencies
+pip install -r requirements-backend.txt
 ```
 
-Install Patchright:
-```bash
-patchright install chromium
+### 3. React Flow Visualizer Setup
+```powershell
+# Navigate to React app
+cd agent-flow-visualizer
+
+# Install Node.js dependencies
+npm install
+
+# Return to root directory
+cd ..
 ```
 
-Spin up your agent:
+### 4. Environment Variables
+Create a `.env` file in the root directory:
+```env
+# LLM Provider (choose one)
+OPENAI_API_KEY=your_openai_key_here
+GROQ_API_KEY=your_groq_key_here
+ANTHROPIC_API_KEY=your_anthropic_key_here
 
+# Optional: Browser settings
+CHROME_INSTANCE_PATH=/path/to/chrome
+CHROME_REMOTE_DEBUGGING_PORT=9222
+```
+
+## 🏃‍♂️ Running the Application
+
+### Backend Server
+Start the FastAPI backend in one terminal:
+```powershell
+python backend.py
+```
+- Backend runs on: `http://localhost:8000`
+- API docs available at: `http://localhost:8000/docs`
+
+### React Flow Visualizer
+Start the React frontend in another terminal:
+```powershell
+cd agent-flow-visualizer
+npm start
+```
+- Frontend runs on: `http://localhost:3000`
+- Automatically connects to the backend API
+
+## 🤖 Usage Examples
+
+### 1. Using the Web Interface
+1. Open `http://localhost:3000`
+2. Enter your task description
+3. Select model and script language (Python/JavaScript)
+4. Click "Run Agent"
+5. Wait for the 15-second captcha delay
+6. Monitor progress and view generated scripts
+
+### 2. Using the API Directly
 ```python
-from langchain_openai import ChatOpenAI
+import requests
+
+# Run an agent task
+response = requests.post("http://localhost:8000/run-agent", json={
+    "task": "Search for Python tutorials on Google",
+    "model": "gpt-4o",
+    "script_language": "javascript"
+})
+
+# Get agent status
+status = requests.get("http://localhost:8000/status")
+
+# Download generated script
+script = requests.get("http://localhost:8000/download-script")
+```
+
+### 3. Command Line Usage
+```python
 from browser_use import Agent
-import asyncio
-from dotenv import load_dotenv
-load_dotenv()
+from langchain_openai import ChatOpenAI
 
-async def main():
-    agent = Agent(
-        task="Compare the price of gpt-4o and DeepSeek-V3",
-        llm=ChatOpenAI(model="gpt-4o"),
-    )
-    await agent.run()
+# Create agent with captcha wait
+agent = Agent(
+    task="Navigate to example.com and take a screenshot",
+    llm=ChatOpenAI(model="gpt-4o"),
+    playwright_script_language="javascript"  # or "python"
+)
 
-asyncio.run(main())
+# Run agent (includes 15-second captcha wait)
+history = await agent.run()
+
+# Generate replay script
+script_path = history.save_as_playwright_script(
+    path="./generated_script.js",
+    language="javascript"
+)
 ```
 
-Add your API keys for the provider you want to use to your `.env` file.
+## 🔧 Key Features Explained
 
+### 15-Second Captcha Wait
+- **Purpose**: Allows manual captcha solving before automation begins
+- **Trigger**: Activates when browser context is initialized
+- **Location**: Built into browser session initialization and generated scripts
+- **Customizable**: Can be modified in `browser_use/browser/context.py`
+
+### Script Generation
+- **Python Scripts**: Full Playwright automation with helper functions
+- **JavaScript Scripts**: Node.js compatible with same functionality
+- **Features**: XPath fallback, sensitive data replacement, error handling
+- **Output**: Self-contained executable scripts
+
+### React Flow Visualizer
+- **Purpose**: Visual representation of agent workflows
+- **Features**: Real-time updates, task monitoring, script download
+- **Technology**: React Flow with FastAPI backend integration
+
+## 📁 Project Structure
+
+```
+browser-use-free-groq-api/
+├── backend.py                     # FastAPI server
+├── browser_use/                   # Core browser automation
+│   ├── agent/                     # Agent logic and script generation
+│   │   ├── playwright_script_generator.py      # Python script generation
+│   │   ├── playwright_script_generator_js.py   # JavaScript script generation
+│   │   ├── playwright_script_helpers.py        # Python helpers
+│   │   └── playwright_script_helpers.js        # JavaScript helpers
+│   ├── browser/                   # Browser management
+│   └── controller/                # Action registry
+├── agent-flow-visualizer/         # React frontend
+│   ├── src/                       # React components
+│   └── public/                    # Static assets
+├── examples/                      # Usage examples
+├── tests/                         # Test suite
+└── docs/                          # Documentation
+```
+
+## 🧪 Testing
+
+### Backend Tests
+```powershell
+# Test script generation
+python test_script_generation_wait.py
+
+# Test backend functionality
+python test_backend_js.py
+
+# Test captcha wait
+python test_captcha_wait.py
+```
+
+### Running Full Test Suite
+```powershell
+pytest tests/
+```
+
+## 📝 Development & Contributing
+
+### Making Changes
+
+1. **Create Feature Branch**
+```powershell
+git checkout -b feature/your-feature-name
+```
+
+2. **Make Your Changes**
+- Follow existing code patterns
+- Add tests for new functionality
+- Update documentation as needed
+
+3. **Test Your Changes**
+```powershell
+# Run tests
+pytest tests/
+
+# Test backend
+python backend.py
+
+# Test frontend
+cd agent-flow-visualizer && npm start
+```
+
+4. **Commit Guidelines**
+```powershell
+# Conventional commit format
+git add .
+git commit -m "feat: add new script generation feature"
+git commit -m "fix: resolve captcha wait timing issue"
+git commit -m "docs: update README with new features"
+```
+
+### Commit Types
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation changes
+- `style:` Code style changes
+- `refactor:` Code refactoring
+- `test:` Test additions/changes
+- `chore:` Maintenance tasks
+
+### Pull Request Process
+
+1. **Push Changes**
+```powershell
+git push origin feature/your-feature-name
+```
+
+2. **Create Pull Request**
+- Use descriptive title and description
+- Link related issues
+- Add screenshots for UI changes
+- Ensure all tests pass
+
+3. **Code Review**
+- Address reviewer feedback
+- Make requested changes
+- Keep commits clean and focused
+
+## 🔍 API Endpoints
+
+### Core Endpoints
+- `POST /run-agent` - Execute agent task
+- `GET /status` - Get current agent status
+- `GET /download-script` - Download generated script
+- `GET /history` - Get agent execution history
+- `POST /run-replay` - Execute replay script
+- `GET /script-info` - Get script information
+
+### Example Requests
 ```bash
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
-AZURE_OPENAI_ENDPOINT=
-AZURE_OPENAI_KEY=
-GEMINI_API_KEY=
-DEEPSEEK_API_KEY=
-GROK_API_KEY=
-NOVITA_API_KEY=
+# Run agent with JavaScript output
+curl -X POST "http://localhost:8000/run-agent" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task": "Search for Python on Google",
+    "model": "gpt-4o",
+    "script_language": "javascript"
+  }'
+
+# Check status
+curl "http://localhost:8000/status"
+
+# Download script
+curl "http://localhost:8000/download-script" -o script.js
 ```
 
-For other settings, models, and more, check out the [documentation 📕](https://docs.browser-use.com).
+## 🐛 Troubleshooting
 
-### Test with UI
+### Common Issues
 
-You can test browser-use using its [Web UI](https://github.com/browser-use/web-ui) or [Desktop App](https://github.com/browser-use/desktop).
-
-### Test with an interactive CLI
-
-You can also use our interactive CLI (similar to `claude` code):
-
-```bash
-$ browser-use
+1. **Browser Launch Fails**
+```
+Error: Browser launch failed
+Solution: Ensure Chrome is installed and accessible
 ```
 
-# Demos
+2. **API Key Issues**
+```
+Error: Invalid API key
+Solution: Check .env file and API key validity
+```
 
-<br/><br/>
+3. **Port Conflicts**
+```
+Error: Port already in use
+Solution: Stop other services or change ports in config
+```
 
-[Task](https://github.com/browser-use/browser-use/blob/main/examples/use-cases/shopping.py): Add grocery items to cart, and checkout.
+4. **Captcha Wait Not Working**
+```
+Issue: No 15-second delay
+Solution: Check browser context initialization in logs
+```
 
-[![AI Did My Groceries](https://github.com/user-attachments/assets/d9359085-bde6-41d4-aa4e-6520d0221872)](https://www.youtube.com/watch?v=L2Ya9PYNns8)
+### Debug Mode
+Enable debug logging:
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
 
-<br/><br/>
+## 📊 Performance & Limitations
 
-Prompt: Add my latest LinkedIn follower to my leads in Salesforce.
+### Performance
+- **Script Generation**: ~1-2 seconds per script
+- **Agent Execution**: Varies by task complexity
+- **Memory Usage**: ~100-500MB depending on browser content
 
-![LinkedIn to Salesforce](https://github.com/user-attachments/assets/1440affc-a552-442e-b702-d0d3b277b0ae)
+### Limitations
+- **Captcha Wait**: Fixed at 15 seconds (customizable in code)
+- **Browser Support**: Chrome/Chromium recommended
+- **Concurrent Agents**: Single agent execution at a time
 
-<br/><br/>
+## 🔐 Security Considerations
 
-[Prompt](https://github.com/browser-use/browser-use/blob/main/examples/use-cases/find_and_apply_to_jobs.py): Read my CV & find ML jobs, save them to a file, and then start applying for them in new tabs, if you need help, ask me.'
+- **Sensitive Data**: Automatically replaced in generated scripts
+- **API Keys**: Store in `.env` file, never commit
+- **Browser Security**: Disable security only when necessary
+- **CORS**: Configured for localhost development
 
-https://github.com/user-attachments/assets/171fb4d6-0355-46f2-863e-edb04a828d04
+## 📈 Roadmap
 
-<br/><br/>
+- [ ] Multiple concurrent agent support
+- [ ] Custom captcha wait duration
+- [ ] Additional script languages (C#, Java)
+- [ ] Advanced flow visualization
+- [ ] Cloud deployment support
+- [ ] Database integration for history
 
-[Prompt](https://github.com/browser-use/browser-use/blob/main/examples/browser/real_browser.py): Write a letter in Google Docs to my Papa, thanking him for everything, and save the document as a PDF.
+## 🤝 Contributing
 
-![Letter to Papa](https://github.com/user-attachments/assets/242ade3e-15bc-41c2-988f-cbc5415a66aa)
+We welcome contributions! Please:
 
-<br/><br/>
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
-[Prompt](https://github.com/browser-use/browser-use/blob/main/examples/custom-functions/save_to_file_hugging_face.py): Look up models with a license of cc-by-sa-4.0 and sort by most likes on Hugging face, save top 5 to file.
+## 📄 License
 
-https://github.com/user-attachments/assets/de73ee39-432c-4b97-b4e8-939fd7f323b3
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-<br/><br/>
+## 🙏 Acknowledgments
 
-## More examples
+- Browser-use framework for core automation
+- Playwright for browser automation
+- React Flow for visualization
+- FastAPI for backend framework
 
-For more examples see the [examples](examples) folder or join the [Discord](https://link.browser-use.com/discord) and show off your project. You can also see our [`awesome-prompts`](https://github.com/browser-use/awesome-prompts) repo for prompting inspiration.
+## 📞 Support
 
-# Vision
-
-Tell your computer what to do, and it gets it done.
-
-## Roadmap
-
-### Agent
-
-- [ ] Improve agent memory to handle +100 steps
-- [ ] Enhance planning capabilities (load website specific context)
-- [ ] Reduce token consumption (system prompt, DOM state)
-
-### DOM Extraction
-
-- [ ] Enable detection for all possible UI elements
-- [ ] Improve state representation for UI elements so that all LLMs can understand what's on the page
-
-### Workflows
-
-- [ ] Let user record a workflow - which we can rerun with browser-use as a fallback
-- [ ] Make rerunning of workflows work, even if pages change
-
-### User Experience
-
-- [ ] Create various templates for tutorial execution, job application, QA testing, social media, etc. which users can just copy & paste.
-- [ ] Improve docs
-- [ ] Make it faster
-
-### Parallelization
-
-- [ ] Human work is sequential. The real power of a browser agent comes into reality if we can parallelize similar tasks. For example, if you want to find contact information for 100 companies, this can all be done in parallel and reported back to a main agent, which processes the results and kicks off parallel subtasks again.
-
-
-## Contributing
-
-We love contributions! Feel free to open issues for bugs or feature requests. To contribute to the docs, check out the `/docs` folder.
-
-## Local Setup
-
-To learn more about the library, check out the [local setup 📕](https://docs.browser-use.com/development/local-setup).
-
-
-`main` is the primary development branch with frequent changes. For production use, install a stable [versioned release](https://github.com/browser-use/browser-use/releases) instead.
+- **Issues**: Create GitHub issues for bugs
+- **Discussions**: Use GitHub discussions for questions
+- **Documentation**: Check `/docs` folder for detailed guides
 
 ---
 
-## Swag
-
-Want to show off your Browser-use swag? Check out our [Merch store](https://browsermerch.com). Good contributors will receive swag for free 👀.
-
-## Citation
-
-If you use Browser Use in your research or project, please cite:
-
-```bibtex
-@software{browser_use2024,
-  author = {Müller, Magnus and Žunič, Gregor},
-  title = {Browser Use: Enable AI to control your browser},
-  year = {2024},
-  publisher = {GitHub},
-  url = {https://github.com/browser-use/browser-use}
-}
-```
-
- <div align="center"> <img src="https://github.com/user-attachments/assets/06fa3078-8461-4560-b434-445510c1766f" width="400"/> 
- 
-[![Twitter Follow](https://img.shields.io/twitter/follow/Gregor?style=social)](https://x.com/gregpr07)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Magnus?style=social)](https://x.com/mamagnus00)
- 
- </div>
-
-<div align="center">
-Made with ❤️ in Zurich and San Francisco
- </div>
+**Happy Automating! 🤖✨**
