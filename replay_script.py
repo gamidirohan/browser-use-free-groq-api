@@ -138,86 +138,44 @@ async def run_generated_script():
 
             # --- Step 1 ---
             # Action 1
-            print(f"Opening new tab and navigating to: https://accounts.google.com/signup (Step 1, Action 1)")
+            print(f"Opening new tab and navigating to: https://github.com (Step 1, Action 1)")
             page = await context.new_page()
-            await page.goto("https://accounts.google.com/signup", timeout=5000)
+            await page.goto("https://github.com", timeout=5000)
             await page.wait_for_load_state('load', timeout=5000)
             await page.wait_for_timeout(1000)
 
             # --- Step 2 ---
             # Action 2
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div[1]/div/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("John", SENSITIVE_DATA), step_info="Step 2, Action 1")
-            # Action 3
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div[2]/div/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("Doe", SENSITIVE_DATA), step_info="Step 2, Action 2")
+            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/button", "click", step_info="Step 2, Action 1")
 
             # --- Step 3 ---
-            # Action 4
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[3]/div/div/div/div/button", "click", step_info="Step 3, Action 1")
+            # Action 3
+            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[1]/div/div[2]/input", "fill", text=replace_sensitive_data("browser-use", SENSITIVE_DATA), step_info="Step 3, Action 1")
 
             # --- Step 4 ---
-            # Action 5
-            # Unsupported action type: select_dropdown_option (Step 4, Action 1)
-            # Action 6
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[1]/div[1]/div[2]/div/div[1]/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("15", SENSITIVE_DATA), step_info="Step 4, Action 2")
-            # Action 7
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[1]/div[1]/div[3]/div/div[1]/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("1990", SENSITIVE_DATA), step_info="Step 4, Action 3")
-            # Action 8
-            # Unsupported action type: select_dropdown_option (Step 4, Action 4)
+            # Action 4
+            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[2]/ul/li/ul/li", "click", step_info="Step 4, Action 1")
 
             # --- Step 5 ---
-            # Action 9
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[1]/div[1]/div[1]/div/div[1]/div/div[1]", "click", step_info="Step 5, Action 1")
+            # Action 5
+            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[4]/main/react-app/div/div/div[1]/div/div/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/div[1]/h3/div/div[2]/a", "click", step_info="Step 5, Action 1")
 
             # --- Step 6 ---
-            # Action 10
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[1]/div[1]/div[1]/div/div[1]/div/div[2]/ul/li[1]", "click", step_info="Step 6, Action 1")
+            # Action 6
+            print(f"Scrolling down by one page height (Step 6, Action 1)")
+            await page.evaluate('window.scrollBy(0, window.innerHeight)')
+            await page.wait_for_timeout(500)
 
             # --- Step 7 ---
-            # Action 11
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[2]/div[1]/div[1]/div/div[1]", "click", step_info="Step 7, Action 1")
+            # Action 7
+            # Action: extract_content (Goal: list of contributors with their contributions) - Skipped in Playwright script (Step 7, Action 1)
 
             # --- Step 8 ---
-            # Action 12
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div[2]/div[1]/div[1]/div/div[2]/ul/li[2]", "click", step_info="Step 8, Action 1")
-
-            # --- Step 9 ---
-            # Action 13
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[3]/div/div/div/div/button", "click", step_info="Step 9, Action 1")
-
-            # --- Step 10 ---
-            # Action 14
-            # Skipping input_text (Step 10, Action 1): missing index (0) or selector (None)
-
-            # --- Step 11 ---
-            # Action 15
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div[1]/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("john.doe.usa1990", SENSITIVE_DATA), step_info="Step 11, Action 1")
-            # Action 16
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[3]/div/div[1]/div/div/button", "click", step_info="Step 11, Action 2")
-
-            # --- Step 12 ---
-            # Action 17
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div[1]/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("jd6030110", SENSITIVE_DATA), step_info="Step 12, Action 1")
-            # Action 18
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[3]/div/div[1]/div/div/button", "click", step_info="Step 12, Action 2")
-
-            # --- Step 13 ---
-            # Action 19
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div/div/div[1]/div/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("SecurePass!123", SENSITIVE_DATA), step_info="Step 13, Action 1")
-            # Action 20
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[2]/div/div/div/form/span/section/div/div/div/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input", "fill", text=replace_sensitive_data("SecurePass!123", SENSITIVE_DATA), step_info="Step 13, Action 2")
-            # Action 21
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[1]/div[2]/c-wiz/div/div[3]/div/div/div/div/button", "click", step_info="Step 13, Action 3")
-
-            # --- Step 14 ---
-            # Action 22
-            # Skipping click_element_by_index (Step 14, Action 1): missing index (5) or selector (None)
-
-            # --- Step 15 ---
-            # Action 23
-            print("\n--- Task marked as Done by agent (Step 15, Action 1) ---")
-            print(f"Agent reported success: False")
+            # Action 8
+            print("\n--- Task marked as Done by agent (Step 8, Action 1) ---")
+            print(f"Agent reported success: True")
             # Final Message from agent (may contain placeholders):
-            final_message = replace_sensitive_data("The account creation process has reached the phone verification step. A QR code is displayed for verification. The user needs to scan the QR code with their phone to complete the verification process.", SENSITIVE_DATA)
+            final_message = replace_sensitive_data("Successfully retrieved the list of contributors for the 'browser-use' repository on GitHub. The contributors are:\n1. Magnus M\u00fcller - Author\n2. Gregor \u017duni\u010d - Author\n3. 202 other contributors - Various contributions.", SENSITIVE_DATA)
             print(final_message)
         except PlaywrightActionError as pae:
             print(f'\n--- Playwright Action Error: {pae} ---', file=sys.stderr)

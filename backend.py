@@ -7,7 +7,9 @@ import sys
 import os
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Any
+import uuid
+from datetime import datetime
 
 # Import browser_use modules
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -34,6 +36,17 @@ class TaskRequest(BaseModel):
     temperature: float = 0.0
     script_language: str = "python"  # "python" or "javascript"
 
+class RecordingRequest(BaseModel):
+    name: str
+    task: str
+    nodes: List[Dict[str, Any]]
+    edges: List[Dict[str, Any]]
+    timestamp: str
+
+class ScriptRegenerateRequest(BaseModel):
+    nodes: List[Dict[str, Any]]
+    edges: List[Dict[str, Any]]
+
 class AgentStatus(BaseModel):
     status: str  # "idle", "running", "completed", "error"
     message: str
@@ -44,6 +57,25 @@ class AgentStatus(BaseModel):
 
 # Global status tracking
 current_status = AgentStatus(status="idle", message="Ready to run agent", script_language="python")
+
+# Recordings storage
+RECORDINGS_DIR = Path("recordings")
+RECORDINGS_DIR.mkdir(exist_ok=True)
+
+def get_recordings_file():
+    return RECORDINGS_DIR / "recordings.json"
+
+def load_recordings():
+    recordings_file = get_recordings_file()
+    if recordings_file.exists():
+        with open(recordings_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return []
+
+def save_recordings(recordings):
+    recordings_file = get_recordings_file()
+    with open(recordings_file, 'w', encoding='utf-8') as f:
+        json.dump(recordings, f, indent=2, ensure_ascii=False)
 
 @app.get("/")
 async def root():
@@ -60,7 +92,8 @@ async def run_agent(request: TaskRequest):
     try:
         current_status.status = "running"
         current_status.message = f"Running agent with task: {request.task[:50]}..."
-          # Initialize the model
+        
+        # Initialize the model
         llm = ChatOpenAI(
             model=request.model,
             temperature=request.temperature,
@@ -83,7 +116,8 @@ async def run_agent(request: TaskRequest):
         
         # Update global status with script language
         current_status.script_language = request.script_language
-          # Save history
+        
+        # Save history
         if history:
             history.save_to_file("agent_history.json")
             current_status.history_available = True
@@ -161,6 +195,108 @@ async def get_flow_data():
         with open(flow_path) as f:
             return json.load(f)
             
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/recordings")
+async def get_recordings():
+    """Get all saved recordings"""
+    try:
+        recordings = load_recordings()
+        return recordings
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/recordings")
+async def save_recording(request: RecordingRequest):
+    """Save a new recording"""
+    try:
+        recordings = load_recordings()
+        
+        # Create new recording
+        new_recording = {
+            "id": str(uuid.uuid4()),
+            "name": request.name,
+            "task": request.task,
+            "nodes": request.nodes,
+            "edges": request.edges,
+            "timestamp": request.timestamp,
+            "created_at": datetime.now().isoformat()
+        }
+        
+        recordings.append(new_recording)
+        save_recordings(recordings)
+        
+        return {"success": True, "message": "Recording saved successfully", "id": new_recording["id"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/recordings/{recording_id}")
+async def get_recording(recording_id: str):
+    """Get a specific recording by ID"""
+    try:
+        recordings = load_recordings()
+        recording = next((r for r in recordings if r["id"] == recording_id), None)
+        
+        if not recording:
+            raise HTTPException(status_code=404, detail="Recording not found")
+            
+        return recording
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/recordings/{recording_id}")
+async def delete_recording(recording_id: str):
+    """Delete a recording by ID"""
+    try:
+        recordings = load_recordings()
+        original_count = len(recordings)
+        recordings = [r for r in recordings if r["id"] != recording_id]
+        
+        if len(recordings) == original_count:
+            raise HTTPException(status_code=404, detail="Recording not found")
+            
+        save_recordings(recordings)
+        return {"success": True, "message": "Recording deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/regenerate-script")
+async def regenerate_script(request: ScriptRegenerateRequest):
+    """Regenerate script from manually edited flow"""
+    try:
+        # Import the script generation functions
+        from browser_use.agent.playwright_script_generator import generate_playwright_script
+        from browser_use.agent.playwright_script_generator_js import generate_playwright_script_js
+        
+        # Convert nodes back to action format for script generation
+        actions = []
+        for node in request.nodes:
+            if 'actionType' in node.get('data', {}):
+                action_type = node['data']['actionType']
+                action_params = node['data'].get('actionParams', {})
+                actions.append({action_type: action_params})
+        
+        # Generate Python script
+        python_script = generate_playwright_script(actions, "Manually edited flow")
+        with open("replay_script.py", 'w', encoding='utf-8') as f:
+            f.write(python_script)
+        
+        # Generate JavaScript script
+        js_script = generate_playwright_script_js(actions, "Manually edited flow")
+        with open("replay_script.js", 'w', encoding='utf-8') as f:
+            f.write(js_script)
+        
+        # Update status
+        global current_status
+        current_status.replay_available = True
+        
+        return {"success": True, "message": "Scripts regenerated successfully"}
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
