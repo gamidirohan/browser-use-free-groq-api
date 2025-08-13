@@ -358,10 +358,21 @@ class BrowserContext:
 			logger.debug(f'Failed to set viewport size: {e}')
 		self.active_tab = active_page
 
-		# Wait 15 seconds after browser initialization for manual captcha solving
-		logger.info('⏱️  Waiting 15 seconds for manual captcha solving...')
-		await asyncio.sleep(15)
-		logger.info('✅  15-second wait completed, continuing with automation')
+		# Wait after browser initialization for manual captcha solving (configurable)
+		try:
+			wait_secs_env = os.environ.get('BROWSER_USE_CAPTCHA_WAIT_SECONDS')
+			wait_secs = float(wait_secs_env) if wait_secs_env is not None else 15.0
+			if wait_secs > 0:
+				logger.info(f'⏱️  Waiting {wait_secs:.0f} seconds for manual captcha solving...')
+				await asyncio.sleep(wait_secs)
+				logger.info('✅  Captcha wait completed, continuing with automation')
+			else:
+				logger.debug('Skipping captcha wait due to configuration')
+		except Exception:
+			# Fallback to original fixed wait on error
+			logger.info('⏱️  Waiting 15 seconds for manual captcha solving...')
+			await asyncio.sleep(15)
+			logger.info('✅  15-second wait completed, continuing with automation')
 
 		return self.session
 
@@ -675,6 +686,8 @@ class BrowserContext:
 			if content_length and int(content_length) > 5 * 1024 * 1024:  # 5MB
 				pending_requests.remove(request)
 				return
+
+			# logger.debug(f'Response received: {response.url} ({response.status})')
 
 			nonlocal last_activity
 			pending_requests.remove(request)
