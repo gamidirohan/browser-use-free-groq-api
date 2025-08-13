@@ -138,44 +138,120 @@ async def run_generated_script():
 
             # --- Step 1 ---
             # Action 1
-            print(f"Opening new tab and navigating to: https://github.com (Step 1, Action 1)")
-            page = await context.new_page()
-            await page.goto("https://github.com", timeout=5000)
+            search_url = f"https://www.google.com/search?q={ urllib.parse.quote_plus(replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA)) }&udm=14"
+            print(f"Searching Google for query related to: { replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA) } (Step 1, Action 1)")
+            await page.goto(search_url, timeout=5000)
             await page.wait_for_load_state('load', timeout=5000)
             await page.wait_for_timeout(1000)
 
             # --- Step 2 ---
             # Action 2
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/button", "click", step_info="Step 2, Action 1")
+            await _try_locate_and_act(page, "xpath=//html/body/div[2]/div[3]/div[2]/div/label", "click", step_info="Step 2, Action 1")
 
             # --- Step 3 ---
             # Action 3
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[1]/div/div[2]/input", "fill", text=replace_sensitive_data("browser-use", SENSITIVE_DATA), step_info="Step 3, Action 1")
+            await _try_locate_and_act(page, "xpath=//html/body/div/div/div[3]/div[2]/div[1]/div[1]/div[1]/button", "click", step_info="Step 3, Action 1")
+            # Action 4
+            await _try_locate_and_act(page, "xpath=//html/body/div/div/div[3]/div[2]/div[1]/div[1]/div[2]/button", "click", step_info="Step 3, Action 2")
 
             # --- Step 4 ---
-            # Action 4
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[3]/header/div/div[2]/div/div/qbsearch-input/div[1]/div/modal-dialog/div/div/div/form/query-builder/div[1]/div[2]/ul/li/ul/li", "click", step_info="Step 4, Action 1")
+            # Action 5
+            await _try_locate_and_act(page, "xpath=//html/body/div/div/div[3]/div[2]/div[1]/div[1]/div[2]/button", "click", step_info="Step 4, Action 1")
 
             # --- Step 5 ---
-            # Action 5
-            await _try_locate_and_act(page, "xpath=//html/body/div[1]/div[4]/main/react-app/div/div/div[1]/div/div/div[2]/div/div/div[1]/div[4]/div/div/div[1]/div/div[1]/h3/div/div[2]/a", "click", step_info="Step 5, Action 1")
+            # Action 6
+            await _try_locate_and_act(page, "xpath=//html/body/div/div/div[2]/div/div[2]/div[1]/div[1]/div[2]/button", "click", step_info="Step 5, Action 1")
 
             # --- Step 6 ---
-            # Action 6
-            print(f"Scrolling down by one page height (Step 6, Action 1)")
-            await page.evaluate('window.scrollBy(0, window.innerHeight)')
-            await page.wait_for_timeout(500)
+            # Action 7
+            await _try_locate_and_act(page, "xpath=//html/body/div/div/div[2]/div/div[2]/div[1]/div[1]/div[2]/button", "click", step_info="Step 6, Action 1")
 
             # --- Step 7 ---
-            # Action 7
-            # Action: extract_content (Goal: list of contributors with their contributions) - Skipped in Playwright script (Step 7, Action 1)
+            # Action 8
+            await _try_locate_and_act(page, "xpath=//html/body/div[3]/div/div[12]/div/div/div[2]/div[2]/div/div/div[1]/div/div/div[1]/div/div/span/a", "click", step_info="Step 7, Action 1")
 
             # --- Step 8 ---
-            # Action 8
-            print("\n--- Task marked as Done by agent (Step 8, Action 1) ---")
+            # Action 9
+            # Action: extract_content (Goal: summarize the article on MCPs) - Skipped in Playwright script (Step 8, Action 1)
+
+            # --- Step 9 ---
+            # Action 10
+            await asyncio.sleep(60)  # Wait 1 minute (important) before going back
+            print(f"Navigating back using browser history (Step 9, Action 1)")
+            await page.go_back(timeout=5000)
+            await page.wait_for_load_state('load', timeout=5000)
+            await page.wait_for_timeout(1000)
+
+            # --- Step 10 ---
+            # Action 11
+            search_url = f"https://www.google.com/search?q={ urllib.parse.quote_plus(replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA)) }&udm=14"
+            print(f"Searching Google for query related to: { replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA) } (Step 10, Action 1)")
+            await page.goto(search_url, timeout=5000)
+            await page.wait_for_load_state('load', timeout=5000)
+            await page.wait_for_timeout(1000)
+
+            # --- Step 11 ---
+            # Action 12
+            await _try_locate_and_act(page, "xpath=//html/body/div[3]/div/div[12]/div/div/div[2]/div[2]/div/div/div[2]/div/div/div[1]/div/div/span/a", "click", step_info="Step 11, Action 1")
+
+            # --- Step 12 ---
+            # Action 13
+            # Action: extract_content (Goal: Extract detailed information about MCPs from this Medium article.) - Skipped in Playwright script (Step 12, Action 1)
+
+            # --- Step 13 ---
+            # Action 14
+            search_url = f"https://www.google.com/search?q={ urllib.parse.quote_plus(replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA)) }&udm=14"
+            print(f"Searching Google for query related to: { replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA) } (Step 13, Action 1)")
+            await page.goto(search_url, timeout=5000)
+            await page.wait_for_load_state('load', timeout=5000)
+            await page.wait_for_timeout(1000)
+
+            # --- Step 14 ---
+            # Action 15
+            await _try_locate_and_act(page, "xpath=//html/body/div[3]/div/div[12]/div/div/div[2]/div[2]/div/div/div[4]/div/div/div[1]/div/div/span/a", "click", step_info="Step 14, Action 1")
+
+            # --- Step 15 ---
+            # Action 16
+            # Action: extract_content (Goal: Extract detailed information about MCPs from this Medium article.) - Skipped in Playwright script (Step 15, Action 1)
+
+            # --- Step 16 ---
+            # Action 17
+            search_url = f"https://www.google.com/search?q={ urllib.parse.quote_plus(replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA)) }&udm=14"
+            print(f"Searching Google for query related to: { replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA) } (Step 16, Action 1)")
+            await page.goto(search_url, timeout=5000)
+            await page.wait_for_load_state('load', timeout=5000)
+            await page.wait_for_timeout(1000)
+
+            # --- Step 17 ---
+            # Action 18
+            await _try_locate_and_act(page, "xpath=//html/body/div[3]/div/div[12]/div/div/div[2]/div[2]/div/div/div[6]/div/div/div[1]/div/div/span/a", "click", step_info="Step 17, Action 1")
+
+            # --- Step 18 ---
+            # Action 19
+            # Action: extract_content (Goal: Extract detailed information about MCPs from this Medium article.) - Skipped in Playwright script (Step 18, Action 1)
+
+            # --- Step 19 ---
+            # Action 20
+            search_url = f"https://www.google.com/search?q={ urllib.parse.quote_plus(replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA)) }&udm=14"
+            print(f"Searching Google for query related to: { replace_sensitive_data("MCPs site:medium.com", SENSITIVE_DATA) } (Step 19, Action 1)")
+            await page.goto(search_url, timeout=5000)
+            await page.wait_for_load_state('load', timeout=5000)
+            await page.wait_for_timeout(1000)
+
+            # --- Step 20 ---
+            # Action 21
+            await _try_locate_and_act(page, "xpath=//html/body/div[3]/div/div[12]/div/div/div[2]/div[2]/div/div/div[8]/div/div/div[1]/div/div/span/a/div", "click", step_info="Step 20, Action 1")
+
+            # --- Step 21 ---
+            # Action 22
+            # Action: extract_content (Goal: Extract detailed information about MCPs from the article.) - Skipped in Playwright script (Step 21, Action 1)
+
+            # --- Step 22 ---
+            # Action 23
+            print("\n--- Task marked as Done by agent (Step 22, Action 1) ---")
             print(f"Agent reported success: True")
             # Final Message from agent (may contain placeholders):
-            final_message = replace_sensitive_data("Successfully retrieved the list of contributors for the 'browser-use' repository on GitHub. The contributors are:\n1. Magnus M\u00fcller - Author\n2. Gregor \u017duni\u010d - Author\n3. 202 other contributors - Various contributions.", SENSITIVE_DATA)
+            final_message = replace_sensitive_data("### Summary of MCPs from Medium Articles\n\n1. **Understanding MCPs: Transforming AI Beyond Limits**\n   - **Author**: Abu Bakar\n   - **Summary**: MCPs enhance AI capabilities by providing context awareness, tool integration, and task execution. They address limitations of LLMs like static knowledge and lack of tool access.\n\n2. **What Are MCPs and Why Should You Care?**\n   - **Author**: Nilupul Manodya\n   - **Summary**: MCPs standardize AI interactions with external systems, enabling reliable and scalable communication. They act as a middleware layer, similar to an OS kernel.\n\n3. **10 Open-Source MCPs That Make Your AI Agents Smarter**\n   - **Author**: <devtips/>\n   - **Summary**: MCPs provide structure, memory, and coordination to AI agents, transforming them into coordinated teams. The article introduces 10 open-source MCPs.\n\n4. **MCPs + LangChain + FastAPI: From Zero to Hero**\n   - **Author**: Andres Felipe Tellez Yepes\n   - **Summary**: The article provides examples of integrating MCPs with LangChain and FastAPI, showcasing client-server architectures and enhancing MCP skills.\n\n5. **MCPs, Simply Explained**\n   - **Author**: Woyera\n   - **Summary**: MCPs guide AI models in specific roles, ensuring consistency and scalability. They act as a universal plug for AI, connecting to various tools and data sources.\n\nThe articles collectively highlight MCPs as a transformative framework for AI, enhancing its ability to interact with external systems, perform tasks efficiently, and operate in various roles.", SENSITIVE_DATA)
             print(final_message)
         except PlaywrightActionError as pae:
             print(f'\n--- Playwright Action Error: {pae} ---', file=sys.stderr)
